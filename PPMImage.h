@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <fstream>
 
@@ -25,11 +26,36 @@ public:
 	PPMImage();
 	~PPMImage();
 
+	struct color** getTab() {
+		return tab;
+	}
+
+	class Zagniezdzona {
+	public:
+		int sizex; int sizey;
+		struct color** array;
+		Zagniezdzona(PPMImage& o){
+			sizex = o.dX;
+			sizey = o.dY;
+			array = o.tab;
+		}
+	};
+
+
 	void saveFile(string filename, int fraktal = 1);
+
+	friend ostream& operator << (ostream& s, PPMImage& ppm);
+	friend istream& operator >> (ostream& s, PPMImage& ppm);
+
+	PPMImage & operator =(const PPMImage &);
+	PPMImage & operator +=(const Point &);
+
+	void saveFile(ostream& plik, int fractal = 0);
+	void loadFile(istream& plik);
+
+
 	void saveFileP3(string filename);
 	void loadFile(string filename);
-
 	void white_board();
-
 	void addPoint(const Point *p);
 };
