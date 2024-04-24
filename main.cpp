@@ -10,6 +10,30 @@ int main()
     PPMImage obrazek1(50, 50);
     ofstream plik("nowy3.ppm", ios::binary);
     plik << obrazek1;
+    PPMImage obrazek1(500, 500);    
+    obrazek1.white_board();    
+    Square s(100);    
+    Rectangle r = s;    
+
+    r.set_JI(5, 5);    
+    r.set_fg({ 0,0,255 });    
+    r.Rysuj(obrazek1.getTab());   
+    r.isValid(obrazek1.getdX(), obrazek1.getdY()); 
+    r.Fill({ 0,255,0 }, &obrazek1);    
+    Filling f;    
+    f.setBG({ 100, 0, 0 });   
+    f.Fill(1, 1, &obrazek1);   
+    Triangle t(100, 100);    
+    t.set_JI(300, 300);    
+    t.Rysuj(obrazek1.get_tab());   
+    t.Fill({ 255,255,0 }, &obrazek1);    
+    Circle c(25);    c.set_JI(150, 150);    
+    c.set_fg({ 255,255,255 });    
+    c.Rysuj(obrazek1.get_tab());   
+    c.Fill({ 255,255,255 }, &obrazek1);   
+    ofstream plik("nowy4.ppm", ios::binary);  
+    plik << obrazek1;    plik.close();
+
 
     Square square(10); 
     TriangleRight triangleRight(10, 10); 
