@@ -64,6 +64,7 @@ class Filling {
 protected:
 	struct color bg;
 	struct color curr;
+	vector<pair<int, int>> points;
 public:
 
 	Filling() { cout << "@@@@"; };
@@ -82,7 +83,25 @@ public:
 	void Fill(int x, int y, PPMImage* obraz) {
 		ziomek = new PPMImage::Zagniezdzona(*obraz);
 		curr = ziomek->array[y][x];
-		PaintPixel(y, x);
+		points.push_back(pair<int, int>(y, x));
+		do {
+			pair<int, int> pixel = points.back();
+			points.pop_back();
+			int _y = pixel.first;
+			int _x = pixel.second;
+
+			if (_x >= 0 == _y >= 0 && _x < ziomek->sizex && _y < ziomek->sizey) {
+				if (ziomek->array[_y][_x] == curr) {
+					ziomek->array[_y][_x] = bg;
+					points.push_back(pair<int, int>(_y, _x + 1));
+					points.push_back(pair<int, int>(_y, _x - 1));
+					points.push_back(pair<int, int>(_y + 1, _x));
+					points.push_back(pair<int, int>(_y - 1, _x));
+				}
+			}
+		} while (!points.empty());
+
+		//PaintPixel(y, x);
 		delete ziomek;
 
 	};
@@ -96,6 +115,7 @@ class Figure : public Shape, public Filling {
 protected:
 	int fillx;
 	int filly;
+	vector<Line> boki;
 public:
 	int cos_tam;
 	Figure(int size1, int size2) : cos_tam(0), Shape(size1, size2), Filling() {};
@@ -123,8 +143,6 @@ private:
 
 
 class Rectangle : public Figure {
-protected:
-	Line boki[4];
 public:
 	Rectangle(int size1, int size2) : Figure(size1, size2) {};
 	Rectangle() {};
@@ -155,9 +173,12 @@ private:
 		Line l2(h, 1, I, J, fg);
 		Line l3(1, w, I, J + h - 1, fg);
 		Line l4(h, 1, I + w - 1, J, fg);
-		boki[0] = l1; boki[1] = l2; boki[2] = l3; boki[3] = l4;
-
-		for (int i = 0; i < 4; i++)
+		boki.push_back(l1);
+		boki.push_back(l2);
+		boki.push_back(l3);
+		boki.push_back(l4);
+	
+		for (int i = 0; i < boki.size(); i++)
 			boki[i].Rysuj(tab);
 
 	}
@@ -215,20 +236,22 @@ private:
 		filly = (J + J + h + J + h) / 3;
 	}
 };
-class Circle : public Figure { 
-public:    
-	Circle(int r) : radius(r) 
-	{ h = w = 2 * r; };    
-void Rysuj(color** tab) override { 
-	Figure::Rysuj(tab);        
-cout << "\nRysuje kolo\n"; 
-}
-private:    
-	int radius;    
+class Circle : public Figure {
+public:
+	Circle(int r) : radius(r)
+	{
+		h = w = 2 * r;
+	};
+	void Rysuj(color** tab) override {
+		Figure::Rysuj(tab);
+		cout << "\nRysuje kolo\n";
+	}
+private:
+	int radius;
 	void setPixel(struct color** tab, int x, int y) {
 		tab[x][y] = fg;
-	}    
-	void set_center() override { 
+	}
+	void set_center() override {
 		fillx = I + w / 2;
 		filly = J + w / 2;
 		cout << "\n" << fillx << " !!!!!!!!!!!!!!\n";
@@ -240,22 +263,23 @@ private:
 		int y = radius;
 		int d = 1 - radius;
 		while (x <= y) {
-			setPixel(tab, xc + x, yc + y);            
-			setPixel(tab, xc - x, yc + y);            
-			setPixel(tab, xc + x, yc - y);            
-			setPixel(tab, xc - x, yc - y);            
-			setPixel(tab, xc + y, yc + x);            
-			setPixel(tab, xc - y, yc + x);            
-			setPixel(tab, xc + y, yc - x);            
-			setPixel(tab, xc - y, yc - x);            
-			if (d < 0)               
-				d += 2 * x + 3;            
-			else { d += 2 * (x - y) + 5;                
-			y--; 
-			}            
-			x++; 
-		} 
-	} 
+			setPixel(tab, xc + x, yc + y);
+			setPixel(tab, xc - x, yc + y);
+			setPixel(tab, xc + x, yc - y);
+			setPixel(tab, xc - x, yc - y);
+			setPixel(tab, xc + y, yc + x);
+			setPixel(tab, xc - y, yc + x);
+			setPixel(tab, xc + y, yc - x);
+			setPixel(tab, xc - y, yc - x);
+			if (d < 0)
+				d += 2 * x + 3;
+			else {
+				d += 2 * (x - y) + 5;
+				y--;
+			}
+			x++;
+		}
+	}
 };
 
 

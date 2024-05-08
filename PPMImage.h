@@ -30,6 +30,14 @@ public:
 		return tab;
 	}
 
+	int getDx() {
+		return  dX;
+	}
+
+	int getDy() {
+		return dY;
+	}
+
 	class Zagniezdzona {
 	public:
 		int sizex; int sizey;
